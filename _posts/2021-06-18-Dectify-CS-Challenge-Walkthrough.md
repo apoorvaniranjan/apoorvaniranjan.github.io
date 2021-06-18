@@ -1,5 +1,5 @@
 ---
-title: Dectify CS Challenge Walkthrough
+title: Detectify CS Challenge Walkthrough
 published: true
 ---
 
