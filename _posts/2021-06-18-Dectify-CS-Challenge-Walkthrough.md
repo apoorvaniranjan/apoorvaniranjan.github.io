@@ -25,7 +25,7 @@ So if the application is expecting a domain name i could bypass it by adding a d
 
 ![error2](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/5.png)
 ![error2](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/6.png)
-Which make me think ,the application is expecting an imput conating a letter and it should not resolve to localhost so which brought me to the conusion that what if I tried Hexadecimal representation of localhost and it worked i was able to take the screenshot of the application.
+Which make me think ,the application is expecting an input containg a letter and it should not resolve to localhost so which brought me to the conusion that what if I tried Hexadecimal representation of localhost and it worked i was able to take the screenshot of the application.
 
 ![adminpanel](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/7.png)
 ![adminpanel](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/8.png)
