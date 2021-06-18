@@ -1,124 +1,71 @@
 ---
-title: Another Sample Page
+title: Dectify CS Challenge Walkthrough
 published: true
 ---
 
-Text can be **bold**, _italic_, ~~strikethrough~~ or `keyword`.
+# Dectify CS Challenge Walkthrough
 
-[Link to another page](another-page).
+Last week a friend of mine suggested a challenge developed by Dectify and asked be to find the vulnerabilities on the application.You can find the link to the challenge [here.](https://github.com/detectify/cs-challenge)
 
-There should be whitespace between paragraphs.
+After following the steps provided in the github repository to start the challenge.I was presented with a web page called **Super secure screenshot service**.
 
-There should be whitespace between paragraphs. We recommend including a README, or a file with information about your project.
+![Index page](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/1.png)
 
-# [](#header-1)Header 1
+What the application does is that it accepts a url and takes a screenshot of the application which can only mean one thing SSRF(Server Side Request Forgery) .
 
-This is a normal paragraph following a header. GitHub is a code hosting platform for version control and collaboration. It lets you and others work together on projects from anywhere.
+![working screenshot](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/2.png)
 
-## [](#header-2)Header 2
+Looking at the page there is a tab to go the admin interface of the application clickng on it opened a new tab with a different port which is not avaialble at the moment so my goal is to retreive the screenshot of the admin interface. 
 
-> This is a blockquote following a header.
->
-> When something is important enough, you do it even if the odds are not in your favor.
+![admin](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/3.png)
 
-### [](#header-3)Header 3
+So i started by entering the admin interface url to the form which gave me an error that **the domain must contain atleast one letter**
 
-```js
-// Javascript code with syntax highlighting.
-var fun = function lang(l) {
-  dateformat.i18n = require('./lang/' + l)
-  return true;
+![admin error](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/4.png)
+
+So if the application is expecting a domain name i could bypass it by adding a domain which resolved to localhost do i tried the "bugbounty.dod.network" which resolves to localhost and the application gave me an error stating that "**Domains that resolve to localhost are not allowed**". 
+
+![error2](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/5.png)
+![error2](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/6.png)
+Which make me think ,the application is expecting an imput conating a letter and it should not resolve to localhost so which brought me to the conusion that what if I tried Hexadecimal representation of localhost and it worked i was able to take the screenshot of the application.
+
+![adminpanel](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/7.png)
+![adminpanel](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/8.png)
+This was the first task the second task was to find a XSS(Cross Site Scripting) vulnerability on the application.The application had only one input so it has to be that input which is vulnerable to XSS. At first i tried the usual xss paylod to check how the application handled that request and the payload was only reflected only on one place which was inside an anchor tag.
+
+![xss1](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/9.png)
+![xss1](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/10.png)
+As you can see the application converts the tags to html entities and removes the word script, Since it is reflecting inside an anchor tag of the Download Screenshot option we can use the javascript pseudo protocol to trigger an alert and inorder to bypass the regex used in the application the final payload was like this.If we click the hyperlink on the download option our payload is triggered and we will have an alert box.
+
+    javascrSCRIPTipt:alert(1)
+
+![xss1](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/11.png)
+![xss1](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/12.png)
+![xss1](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/13.png)
+The final vulnerability was a bit tricky to find an i had to use the repo to take a look and I found a nginx configuration file containing all the paths used in the application in that i found that the the fire is misconfigured and it is vulnerable to an alias traversal vulnerability.You can find more informaton about this vulnerability [here](https://i.blackhat.com/us-18/Wed-August-8/us-18-Orange-Tsai-Breaking-Parser-Logic-Take-Your-Path-Normalization-Off-And-Pop-0days-Out-2.pdf).
+
+```
+server {
+listen 80;
+root /usr/share/nginx/html;
+location / {
+include uwsgi_params;
+uwsgi_pass vuln-screenshot:5000;
+}
+location /screenshots {
+alias /usr/share/nginx/html/;
+}
 }
 ```
+The location screenshots is aliased to /usr/share/nginx/html on visiting /screenshots the content inside /html is served in this case it was the default index page of nginx.
 
-```ruby
-# Ruby code with syntax highlighting
-GitHubPages::Dependencies.gems.each do |gem, version|
-  s.add_dependency(gem, "= #{version}")
-end
-```
+![/screenshots](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/14.png)
+                       
+ Since the location does'nt end with a trailing slash i was able to go back one directory which gave me a 403 error which means that I am now outside the html directory. 
 
-#### [](#header-4)Header 4
+![403](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/15.png)
 
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
-*   This is an unordered list following a header.
+To exploit such vulnerability one must know the location of the files and folders located inside the directory which can be achieved by bruteforing the location in this exercise the location was app and inside contained the scource code of the screenshot application.
 
-##### [](#header-5)Header 5
+![app.py](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/16.png)
 
-1.  This is an ordered list following a header.
-2.  This is an ordered list following a header.
-3.  This is an ordered list following a header.
-
-###### [](#header-6)Header 6
-
-| head1        | head two          | three |
-|:-------------|:------------------|:------|
-| ok           | good swedish fish | nice  |
-| out of stock | good and plenty   | nice  |
-| ok           | good `oreos`      | hmm   |
-| ok           | good `zoute` drop | yumm  |
-
-### There's a horizontal rule below this.
-
-* * *
-
-### Here is an unordered list:
-
-*   Item foo
-*   Item bar
-*   Item baz
-*   Item zip
-
-### And an ordered list:
-
-1.  Item one
-1.  Item two
-1.  Item three
-1.  Item four
-
-### And a nested list:
-
-- level 1 item
-  - level 2 item
-  - level 2 item
-    - level 3 item
-    - level 3 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-  - level 2 item
-  - level 2 item
-- level 1 item
-
-### Small image
-
-![](https://assets-cdn.github.com/images/icons/emoji/octocat.png)
-
-### Large image
-
-![](https://guides.github.com/activities/hello-world/branching.png)
-
-
-### Definition lists can be used with HTML syntax.
-
-<dl>
-<dt>Name</dt>
-<dd>Godzilla</dd>
-<dt>Born</dt>
-<dd>1952</dd>
-<dt>Birthplace</dt>
-<dd>Japan</dd>
-<dt>Color</dt>
-<dd>Green</dd>
-</dl>
-
-```
-Long, single-line code blocks should not wrap. They should horizontally scroll if they are too long. This line should be long enough to demonstrate this.
-```
-
-```
-The final element.
-```
