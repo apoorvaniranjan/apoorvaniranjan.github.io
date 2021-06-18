@@ -3,8 +3,6 @@ title: Dectify CS Challenge Walkthrough
 published: true
 ---
 
-# Dectify CS Challenge Walkthrough
-
 Last week a friend of mine suggested a challenge developed by Dectify and asked be to find the vulnerabilities on the application.You can find the link to the challenge [here.](https://github.com/detectify/cs-challenge)
 
 After following the steps provided in the github repository to start the challenge.I was presented with a web page called **Super secure screenshot service**.
