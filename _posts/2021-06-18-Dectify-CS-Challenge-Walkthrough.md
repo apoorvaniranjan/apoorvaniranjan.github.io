@@ -65,7 +65,7 @@ The location screenshots is aliased to /usr/share/nginx/html on visiting /screen
 
 ![403](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/15.png)
 
-To exploit such vulnerability one must know the location of the files and folders located inside the directory which can be achieved by bruteforing the location in this exercise the location was app and inside contained the scource code of the screenshot application.
+To exploit such vulnerability one must know the location of the files and folders located inside the directory which can be achieved by bruteforing the location in this exercise the location was app and inside contained the source code of the screenshot application.
 
 ![app.py](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/16.png)
 
