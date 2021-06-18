@@ -42,7 +42,7 @@ As you can see the application converts the tags to html entities and removes th
 ![xss1](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/12.png)
 ![xss1](https://github.com/apoorvaniranjan/apoorvaniranjan.github.io/raw/main/assets/images/dectify-cs/13.png)
 
-The final vulnerability was a bit tricky to find an i had to use the repo to take a look and I found a nginx configuration file containing all the paths used in the application in that i found that the the fire is misconfigured and it is vulnerable to an alias traversal vulnerability.You can find more informaton about this vulnerability [here](https://i.blackhat.com/us-18/Wed-August-8/us-18-Orange-Tsai-Breaking-Parser-Logic-Take-Your-Path-Normalization-Off-And-Pop-0days-Out-2.pdf).
+The final vulnerability was a bit tricky to find an i had to use the repo to take a look and I found a nginx configuration file containing all the paths used in the application in that i found that the the file is misconfigured and it is vulnerable to an alias traversal vulnerability.You can find more informaton about this vulnerability [here](https://i.blackhat.com/us-18/Wed-August-8/us-18-Orange-Tsai-Breaking-Parser-Logic-Take-Your-Path-Normalization-Off-And-Pop-0days-Out-2.pdf).
 
 ```
 server {
